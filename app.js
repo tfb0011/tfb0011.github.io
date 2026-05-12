@@ -8,7 +8,10 @@ const STORAGE_KEY = 'toeic800_data_v1';
 let state = {
   vocabIndex: 0,
   vocabKnown: [],       // 覚えた単語のindex配列
-  vocabUnknown: [],     // 覚えてない単語のindex配列
+  vocabUnknown: [],     // 覚えてない単語のindex配列（互換のため保持）
+  vocabMode: 'all',     // 'all' | 'shuffle' | 'unknown'
+  vocabQueue: [],       // shuffle/unknown モード用のindex配列
+  vocabQueuePos: 0,     // vocabQueue の現在位置
   grammarCompleted: [], // 完了した文法のindex配列
   part5Index: 0,
   part5Answers: {},     // {問題index: 選んだ選択肢index}
@@ -65,6 +68,9 @@ function resetAll() {
   state.vocabIndex       = 0;
   state.vocabKnown       = [];
   state.vocabUnknown     = [];
+  state.vocabMode        = 'all';
+  state.vocabQueue       = [];
+  state.vocabQueuePos    = 0;
   state.grammarCompleted = [];
   state.part5Index       = 0;
   state.part5Answers     = {};
@@ -295,12 +301,69 @@ function applyTheme() {
 // =====================================================
 //  単語学習
 // =====================================================
+
+// Fisher-Yates シャッフル
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// モード切替：queue を再構築してpos=0にリセット
+function setVocabMode(mode) {
+  state.vocabMode = mode;
+  const all = Array.from({ length: VOCAB_DATA.length }, (_, i) => i);
+  if (mode === 'shuffle') {
+    state.vocabQueue = shuffle(all);
+    state.vocabQueuePos = 0;
+  } else if (mode === 'unknown') {
+    state.vocabQueue = all.filter(i => !state.vocabKnown.includes(i));
+    state.vocabQueuePos = 0;
+  }
+  // モードボタンのactive表示更新
+  document.querySelectorAll('.vocab-mode-btn').forEach(b => b.classList.remove('active'));
+  const btnMap = { all: 'modeAll', shuffle: 'modeShuffle', unknown: 'modeUnknown' };
+  document.getElementById(btnMap[mode])?.classList.add('active');
+  renderVocab();
+  saveState();
+}
+
+// 現在表示すべきVOCAB_DATAのインデックスを返す
+function currentVocabIdx() {
+  if (state.vocabMode === 'all') return state.vocabIndex;
+  if (state.vocabQueue.length === 0) return -1;
+  const pos = Math.min(state.vocabQueuePos, state.vocabQueue.length - 1);
+  return state.vocabQueue[pos];
+}
+
 function renderVocab() {
   if (VOCAB_DATA.length === 0) return;
-  if (state.vocabIndex >= VOCAB_DATA.length) state.vocabIndex = 0;
-  if (state.vocabIndex < 0) state.vocabIndex = VOCAB_DATA.length - 1;
 
-  const w = VOCAB_DATA[state.vocabIndex];
+  // allモードの境界チェック
+  if (state.vocabMode === 'all') {
+    if (state.vocabIndex >= VOCAB_DATA.length) state.vocabIndex = 0;
+    if (state.vocabIndex < 0) state.vocabIndex = VOCAB_DATA.length - 1;
+  }
+
+  const dataIdx = currentVocabIdx();
+
+  // 未習得モードで対象が0件の場合
+  if (dataIdx === -1) {
+    document.getElementById('wordEn').textContent = '🎉';
+    document.getElementById('wordPos').textContent = '';
+    document.getElementById('wordJa').textContent = '未習得の単語はありません';
+    document.getElementById('wordEx').textContent = '「全単語」モードに切り替えてください。';
+    document.getElementById('wordExJa').style.display = 'none';
+    document.getElementById('vocabCounter').textContent = '0 / 0';
+    document.getElementById('vocabBar').style.width = '100%';
+    document.getElementById('flashcard').classList.remove('flipped');
+    return;
+  }
+
+  const w = VOCAB_DATA[dataIdx];
   document.getElementById('wordEn').textContent = w.en;
   document.getElementById('wordPos').textContent = w.pos;
   document.getElementById('wordJa').textContent = w.ja;
@@ -312,12 +375,23 @@ function renderVocab() {
   } else {
     exJaEl.style.display = 'none';
   }
-  document.getElementById('vocabCounter').textContent =
-    `${state.vocabIndex + 1} / ${VOCAB_DATA.length}`;
-  document.getElementById('vocabBar').style.width =
-    `${((state.vocabIndex + 1) / VOCAB_DATA.length) * 100}%`;
 
-  // カードを表向きに戻す
+  // カウンター・プログレスバー
+  if (state.vocabMode === 'all') {
+    document.getElementById('vocabCounter').textContent =
+      `${state.vocabIndex + 1} / ${VOCAB_DATA.length}`;
+    document.getElementById('vocabBar').style.width =
+      `${((state.vocabIndex + 1) / VOCAB_DATA.length) * 100}%`;
+  } else {
+    const pos   = state.vocabQueuePos + 1;
+    const total = state.vocabQueue.length;
+    const label = state.vocabMode === 'shuffle' ? 'シャッフル' : '未習得';
+    document.getElementById('vocabCounter').textContent =
+      `${pos} / ${total}（${label}）`;
+    document.getElementById('vocabBar').style.width =
+      `${(pos / total) * 100}%`;
+  }
+
   document.getElementById('flashcard').classList.remove('flipped');
 }
 
@@ -325,15 +399,43 @@ function setupVocab() {
   document.getElementById('flashcard').addEventListener('click', () => {
     document.getElementById('flashcard').classList.toggle('flipped');
   });
+
+  // モードボタン
+  document.getElementById('modeAll').addEventListener('click', () => setVocabMode('all'));
+  document.getElementById('modeShuffle').addEventListener('click', () => setVocabMode('shuffle'));
+  document.getElementById('modeUnknown').addEventListener('click', () => setVocabMode('unknown'));
+
+  // 起動時にactive状態を反映
+  const btnMap = { all: 'modeAll', shuffle: 'modeShuffle', unknown: 'modeUnknown' };
+  document.querySelectorAll('.vocab-mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(btnMap[state.vocabMode] || 'modeAll')?.classList.add('active');
+
   document.getElementById('vocabPrev').addEventListener('click', () => {
-    state.vocabIndex -= 1;
+    if (state.vocabMode === 'all') {
+      state.vocabIndex -= 1;
+    } else {
+      state.vocabQueuePos = Math.max(0, state.vocabQueuePos - 1);
+    }
     renderVocab();
     saveState();
   });
+
   document.getElementById('vocabKnown').addEventListener('click', () => {
-    const idx = state.vocabIndex;
-    if (!state.vocabKnown.includes(idx)) state.vocabKnown.push(idx);
-    state.vocabIndex += 1;
+    const dataIdx = currentVocabIdx();
+    if (dataIdx === -1) return;
+    if (!state.vocabKnown.includes(dataIdx)) state.vocabKnown.push(dataIdx);
+
+    if (state.vocabMode === 'all') {
+      state.vocabIndex += 1;
+    } else if (state.vocabMode === 'unknown') {
+      // 未習得リストから削除（リストが縮む）
+      state.vocabQueue.splice(state.vocabQueuePos, 1);
+      if (state.vocabQueuePos >= state.vocabQueue.length) {
+        state.vocabQueuePos = Math.max(0, state.vocabQueue.length - 1);
+      }
+    } else {
+      state.vocabQueuePos += 1;
+    }
     renderVocab();
     saveState();
   });

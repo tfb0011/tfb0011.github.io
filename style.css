@@ -306,8 +306,32 @@ button {
 
 .screen-title {
   font-size: 22px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   color: var(--text);
+}
+
+/* ============ 単語モードセレクター ============ */
+.vocab-mode-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.vocab-mode-btn {
+  flex: 1;
+  padding: 8px 4px;
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--bg-card);
+  color: var(--text-sub);
+  box-shadow: var(--shadow);
+  transition: background 0.15s, color 0.15s;
+}
+
+.vocab-mode-btn.active {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
 }
 
 /* ============ プログレスバー ============ */

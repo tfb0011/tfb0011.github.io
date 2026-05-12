@@ -121,6 +121,11 @@
     <section id="vocabScreen" class="screen">
       <button class="back-btn" data-screen="home">← ホームに戻る</button>
       <h2 class="screen-title">📝 単語学習</h2>
+      <div class="vocab-mode-selector">
+        <button class="vocab-mode-btn active" id="modeAll">📋 全単語</button>
+        <button class="vocab-mode-btn" id="modeShuffle">🔀 シャッフル</button>
+        <button class="vocab-mode-btn" id="modeUnknown">📌 未習得</button>
+      </div>
       <div class="progress-bar"><div class="progress-fill" id="vocabBar"></div></div>
       <div class="card-counter" id="vocabCounter">1 / 100</div>
       <div class="flashcard" id="flashcard">
