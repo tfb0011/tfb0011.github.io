@@ -4,12 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#4F46E5">
-  <meta name="description" content="TOEIC800点を目指す無料学習アプリ">
-  <title>TOEIC800 マスター</title>
+
+  <!-- 基本SEO -->
+  <title>TOEIC800点対策アプリ｜無料で単語3000語・問題1000問以上を学習</title>
+  <meta name="description" content="完全無料のTOEIC800点対策アプリ。単語3000語、文法32項目、Part5・Part6/7問題、模擬試験640問を収録。ログイン不要・スマホ対応・オフライン学習可能。今すぐブラウザで学習開始。">
+  <meta name="keywords" content="TOEIC,TOEIC800,TOEIC対策,TOEIC無料,英語学習アプリ,TOEIC単語,TOEIC文法,TOEIC Part5,TOEIC模試,英語アプリ無料">
+  <meta name="author" content="TOEIC800 マスター">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tfb0011.github.io/">
+
+  <!-- OGP（SNSシェア時の表示） -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tfb0011.github.io/">
+  <meta property="og:title" content="TOEIC800点対策アプリ｜完全無料・登録不要">
+  <meta property="og:description" content="単語3000語・問題1000問以上を無料で。ブラウザで今すぐ学習開始。">
+  <meta property="og:image" content="https://tfb0011.github.io/ogp.png">
+  <meta property="og:site_name" content="TOEIC800 マスター">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TOEIC800点対策アプリ｜完全無料">
+  <meta name="twitter:description" content="単語3000語・問題1000問以上を無料で。">
+  <meta name="twitter:image" content="https://tfb0011.github.io/ogp.png">
+
+  <!-- PWA / アイコン -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="apple-touch-icon" href="icon.svg">
+
+  <!-- パフォーマンス：先読み -->
+  <link rel="preload" href="style.css" as="style">
+  <link rel="preload" href="app.js" as="script">
+
+  <!-- スタイルシート -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6536288248858758"
      crossorigin="anonymous"></script>
 </head>
@@ -17,7 +48,7 @@
   <!-- ヘッダー -->
   <header class="app-header">
     <div class="header-inner">
-      <h1 class="app-title">📚 TOEIC800 マスター</h1>
+      <h1 class="app-title">📚 TOEIC800点対策｜無料学習アプリ</h1>
       <button id="themeToggle" class="theme-toggle" aria-label="テーマ切替">🌙</button>
     </div>
   </header>
@@ -207,12 +238,30 @@
   </footer>
 
   <!-- スクリプト読み込み -->
-<script src="data-vocab.js"></script>
-<script src="data-grammar.js"></script>
-<script src="data-part5.js"></script>
-<script src="data-part67.js"></script>
-<script src="data-mock.js"></script>
-<script src="app.js"></script>
+<script src="data-vocab.js" defer></script>
+<script src="data-grammar.js" defer></script>
+<script src="data-part5.js" defer></script>
+<script src="data-part67.js" defer></script>
+<script src="data-mock.js" defer></script>
+<script src="app.js" defer></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "TOEIC800 マスター",
+    "description": "完全無料のTOEIC800点対策学習アプリ",
+    "url": "https://tfb0011.github.io/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    },
+    "inLanguage": "ja"
+  }
+  </script>
 
   <script>
     // Service Worker登録（PWA対応）
