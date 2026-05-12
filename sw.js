@@ -3,7 +3,7 @@
 //  戦略: Network-first → キャッシュフォールバック
 // ============================================================
 
-const CACHE_NAME = 'toeic800-v2';
+const CACHE_NAME = 'toeic800-v3';
 
 const CACHE_FILES = [
   './',
@@ -19,13 +19,20 @@ const CACHE_FILES = [
   './icon.svg',
 ];
 
-// ---- install: 主要ファイルをキャッシュに登録 ----
+// ---- install: 常に最新ファイルを取得してキャッシュに登録 ----
 self.addEventListener('install', event => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
       console.log('[SW] インストール: キャッシュ登録開始');
-      await cache.addAll(CACHE_FILES);
+      // cache: 'no-store' でブラウザHTTPキャッシュを完全バイパス
+      await Promise.all(
+        CACHE_FILES.map(url =>
+          fetch(new Request(url, { cache: 'no-store' }))
+            .then(res => { if (res.ok) cache.put(url, res); })
+            .catch(() => {})
+        )
+      );
       console.log('[SW] キャッシュ登録完了');
       await self.skipWaiting();
     })()

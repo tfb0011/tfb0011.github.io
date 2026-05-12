@@ -28,10 +28,9 @@ let state = {
 
 // ============ データ保存・読み込み ============
 function saveState() {
-  // 学習アクションのたびに今日の日付を記録
-  const today = new Date().toISOString().slice(0, 10);
+  // 学習アクションのたびに今日の日付を記録（ローカル時刻基準）
   if (!state.studyLog) state.studyLog = {};
-  state.studyLog[today] = 1;
+  state.studyLog[localDateStr(new Date())] = 1;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (e) {
@@ -212,25 +211,31 @@ function refreshHome() {
 }
 
 // ============ 学習カレンダー ============
+// ローカル日付を "YYYY-MM-DD" で返す（UTCではなく端末のタイムゾーン基準）
+function localDateStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function renderStudyCalendar() {
   const el = document.getElementById('studyCalendar');
   if (!el) return;
   const log = state.studyLog || {};
   const today = new Date();
-  const DAYS = 35; // 5週間分（7列×5行）
+  const todayKey = localDateStr(today);
+  const DAYS = 35;
   const DAY_NAMES = ['日', '月', '火', '水', '木', '金', '土'];
 
-  // カレンダー開始日（今日から35日前の週の日曜日）
   const start = new Date(today);
   start.setDate(start.getDate() - DAYS + 1);
 
   const cells = [];
   for (let i = 0; i < DAYS; i++) {
-    const d = new Date(start);
-    d.setDate(start.getDate() + i);
-    const key = d.toISOString().slice(0, 10);
-    const isToday = key === today.toISOString().slice(0, 10);
-    cells.push({ key, day: d.getDate(), studied: !!log[key], isToday });
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    const key = localDateStr(d);
+    cells.push({ key, day: d.getDate(), studied: !!log[key], isToday: key === todayKey });
   }
 
   const studiedCount = cells.filter(c => c.studied).length;
@@ -238,14 +243,10 @@ function renderStudyCalendar() {
   el.innerHTML = `
     <p class="calendar-title">📅 過去35日の学習記録（${studiedCount}日学習）</p>
     <div class="calendar-header">
-      ${DAY_NAMES.map(d => `<span>${d}</span>`).join('')}
+      ${DAY_NAMES.map(n => `<span>${n}</span>`).join('')}
     </div>
     <div class="calendar-grid">
-      ${cells.map(c => `
-        <div class="calendar-day${c.studied ? ' studied' : ''}${c.isToday ? ' today' : ''}"
-             title="${c.key}">
-          ${c.day}
-        </div>`).join('')}
+      ${cells.map(c => `<div class="calendar-day${c.studied ? ' studied' : ''}${c.isToday ? ' today' : ''}" title="${c.key}">${c.day}</div>`).join('')}
     </div>
   `;
 }
