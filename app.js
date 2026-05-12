@@ -22,11 +22,16 @@ let state = {
   totalSeconds: 0,      // 累計学習秒数
   lastStudyDate: null,  // 最終学習日 "YYYY-MM-DD"
   streak: 0,            // 連続学習日数
+  studyLog: {},         // { "YYYY-MM-DD": 1 } 学習した日の記録
   theme: 'light',
 };
 
 // ============ データ保存・読み込み ============
 function saveState() {
+  // 学習アクションのたびに今日の日付を記録
+  const today = new Date().toISOString().slice(0, 10);
+  if (!state.studyLog) state.studyLog = {};
+  state.studyLog[today] = 1;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (e) {
@@ -71,6 +76,7 @@ function resetAll() {
   state.vocabMode        = 'all';
   state.vocabQueue       = [];
   state.vocabQueuePos    = 0;
+  state.studyLog         = {};
   state.grammarCompleted = [];
   state.part5Index       = 0;
   state.part5Answers     = {};
@@ -201,6 +207,80 @@ function refreshHome() {
   document.getElementById('reviewCount').textContent = `${reviewCnt}問`;
   // スコア内訳
   renderScoreBreakdown();
+  // 学習カレンダー
+  renderStudyCalendar();
+}
+
+// ============ 学習カレンダー ============
+function renderStudyCalendar() {
+  const el = document.getElementById('studyCalendar');
+  if (!el) return;
+  const log = state.studyLog || {};
+  const today = new Date();
+  const DAYS = 35; // 5週間分（7列×5行）
+  const DAY_NAMES = ['日', '月', '火', '水', '木', '金', '土'];
+
+  // カレンダー開始日（今日から35日前の週の日曜日）
+  const start = new Date(today);
+  start.setDate(start.getDate() - DAYS + 1);
+
+  const cells = [];
+  for (let i = 0; i < DAYS; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    const key = d.toISOString().slice(0, 10);
+    const isToday = key === today.toISOString().slice(0, 10);
+    cells.push({ key, day: d.getDate(), studied: !!log[key], isToday });
+  }
+
+  const studiedCount = cells.filter(c => c.studied).length;
+
+  el.innerHTML = `
+    <p class="calendar-title">📅 過去35日の学習記録（${studiedCount}日学習）</p>
+    <div class="calendar-header">
+      ${DAY_NAMES.map(d => `<span>${d}</span>`).join('')}
+    </div>
+    <div class="calendar-grid">
+      ${cells.map(c => `
+        <div class="calendar-day${c.studied ? ' studied' : ''}${c.isToday ? ' today' : ''}"
+             title="${c.key}">
+          ${c.day}
+        </div>`).join('')}
+    </div>
+  `;
+}
+
+// ============ バックアップ・リストア ============
+function backupData() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (!data) { alert('保存データがありません。'); return; }
+  const blob = new Blob([data], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `toeic800-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function restoreData(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!Array.isArray(data.vocabKnown) || !Array.isArray(data.grammarCompleted)) {
+        alert('有効なバックアップファイルではありません。');
+        return;
+      }
+      if (!confirm('現在の学習データをバックアップデータで上書きします。よろしいですか？')) return;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      alert('リストア完了！ページを再読み込みします。');
+      location.reload();
+    } catch {
+      alert('ファイルの読み込みに失敗しました。JSONファイルを確認してください。');
+    }
+  };
+  reader.readAsText(file);
 }
 
 // ============ スコア予測ロジック ============
@@ -848,6 +928,19 @@ function init() {
 
   // リセット
   document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+  // バックアップ
+  document.getElementById('backupBtn').addEventListener('click', backupData);
+
+  // リストア
+  const restoreInput = document.getElementById('restoreInput');
+  document.getElementById('restoreBtn').addEventListener('click', () => restoreInput.click());
+  restoreInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) {
+      restoreData(e.target.files[0]);
+      e.target.value = ''; // 同じファイルを再選択できるようリセット
+    }
+  });
 }
 
 // DOM読み込み完了後に起動

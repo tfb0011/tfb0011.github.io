@@ -78,6 +78,8 @@
         </div>
       </div>
 
+      <div id="studyCalendar" class="study-calendar"></div>
+
       <div id="scoreBreakdown" class="score-breakdown"></div>
 
       <h2 class="section-title">📖 学習メニュー</h2>
@@ -114,6 +116,11 @@
         </button>
       </div>
 
+      <div class="backup-btns">
+        <button id="backupBtn" class="backup-btn">📥 データを保存</button>
+        <button id="restoreBtn" class="restore-btn">📤 データを読み込む</button>
+        <input type="file" id="restoreInput" accept=".json" style="display:none">
+      </div>
       <button id="resetBtn" class="reset-btn">⚠️ 学習データをリセット</button>
     </section>
 

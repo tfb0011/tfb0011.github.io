@@ -230,6 +230,93 @@ button {
   box-shadow: var(--shadow);
 }
 
+/* ============ 学習カレンダー ============ */
+.study-calendar {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.calendar-title {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.calendar-header span {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-sub);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text-sub);
+}
+
+.calendar-day.studied {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.calendar-day.today {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.calendar-day.studied.today {
+  background: var(--primary-dark);
+}
+
+/* ============ バックアップ・リストア ============ */
+.backup-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.backup-btn {
+  padding: 12px;
+  background: var(--bg-card);
+  color: var(--primary);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+
+.restore-btn {
+  padding: 12px;
+  background: var(--bg-card);
+  color: var(--text-sub);
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: var(--shadow);
+}
+
 /* ============ スコア内訳 ============ */
 .score-breakdown {
   background: var(--bg-card);
