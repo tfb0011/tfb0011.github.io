@@ -268,23 +268,9 @@ function setupVocab() {
     renderVocab();
     saveState();
   });
-  document.getElementById('vocabNext').addEventListener('click', () => {
-    state.vocabIndex += 1;
-    renderVocab();
-    saveState();
-  });
   document.getElementById('vocabKnown').addEventListener('click', () => {
     const idx = state.vocabIndex;
     if (!state.vocabKnown.includes(idx)) state.vocabKnown.push(idx);
-    state.vocabUnknown = state.vocabUnknown.filter(i => i !== idx);
-    state.vocabIndex += 1;
-    renderVocab();
-    saveState();
-  });
-  document.getElementById('vocabUnknown').addEventListener('click', () => {
-    const idx = state.vocabIndex;
-    if (!state.vocabUnknown.includes(idx)) state.vocabUnknown.push(idx);
-    state.vocabKnown = state.vocabKnown.filter(i => i !== idx);
     state.vocabIndex += 1;
     renderVocab();
     saveState();

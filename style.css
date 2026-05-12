@@ -376,15 +376,6 @@ button {
   color: white;
 }
 
-.btn-unknown {
-  background: var(--danger);
-  color: white;
-}
-
-/* 単語カードは4ボタンなので2列×2行 */
-#vocabScreen .card-buttons {
-  grid-template-columns: 1fr 1fr;
-}
 
 /* ============ 文法 ============ */
 .grammar-list {
