@@ -1,0 +1,18 @@
+{
+  "name": "TOEIC800 マスター",
+  "short_name": "TOEIC800",
+  "description": "TOEIC800点を目指す無料学習アプリ",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f4f6",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

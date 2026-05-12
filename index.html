@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4F46E5">
+  <meta name="description" content="TOEIC800点を目指す無料学習アプリ">
+  <title>TOEIC800 マスター</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="app-title">📚 TOEIC800 マスター</h1>
+      <button id="themeToggle" class="theme-toggle" aria-label="テーマ切替">🌙</button>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main id="mainContent" class="main-content">
+    <!-- ホーム画面 -->
+    <section id="homeScreen" class="screen active">
+      <div class="score-card">
+        <div class="score-label">予測スコア</div>
+        <div class="score-value"><span id="predictedScore">---</span><span class="score-unit">点</span></div>
+        <div class="score-sub">目標: 800点</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">学習時間</div>
+          <div class="stat-value" id="totalTime">0分</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">連続学習</div>
+          <div class="stat-value" id="streakDays">0日</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">正答率</div>
+          <div class="stat-value" id="accuracy">--%</div>
+        </div>
+      </div>
+
+      <h2 class="section-title">📖 学習メニュー</h2>
+      <div class="menu-grid">
+        <button class="menu-card" data-screen="vocab">
+          <div class="menu-icon">📝</div>
+          <div class="menu-title">単語学習</div>
+          <div class="menu-progress" id="vocabProgress">0 / 0</div>
+        </button>
+        <button class="menu-card" data-screen="grammar">
+          <div class="menu-icon">📐</div>
+          <div class="menu-title">文法解説</div>
+          <div class="menu-progress" id="grammarProgress">0 / 0</div>
+        </button>
+        <button class="menu-card" data-screen="part5">
+          <div class="menu-icon">✏️</div>
+          <div class="menu-title">Part5 短文穴埋め</div>
+          <div class="menu-progress" id="part5Progress">0 / 0</div>
+        </button>
+        <button class="menu-card" data-screen="part67">
+          <div class="menu-icon">📄</div>
+          <div class="menu-title">Part6/7 長文読解</div>
+          <div class="menu-progress" id="part67Progress">0 / 0</div>
+        </button>
+        <button class="menu-card" data-screen="mock">
+          <div class="menu-icon">🎯</div>
+          <div class="menu-title">模擬試験</div>
+          <div class="menu-progress">20問</div>
+        </button>
+        <button class="menu-card" data-screen="review">
+          <div class="menu-icon">🔁</div>
+          <div class="menu-title">間違えた問題の復習</div>
+          <div class="menu-progress" id="reviewCount">0問</div>
+        </button>
+      </div>
+
+      <button id="resetBtn" class="reset-btn">⚠️ 学習データをリセット</button>
+    </section>
+
+    <!-- 単語学習画面 -->
+    <section id="vocabScreen" class="screen">
+      <button class="back-btn" data-screen="home">← ホームに戻る</button>
+      <h2 class="screen-title">📝 単語学習</h2>
+      <div class="progress-bar"><div class="progress-fill" id="vocabBar"></div></div>
+      <div class="card-counter" id="vocabCounter">1 / 100</div>
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+          <div class="flashcard-front">
+            <div class="word-english" id="wordEn">word</div>
+            <div class="word-pos" id="wordPos">名詞</div>
+            <div class="tap-hint">タップして意味を表示</div>
+          </div>
+          <div class="flashcard-back">
+            <div class="word-japanese" id="wordJa">意味</div>
+            <div class="word-example" id="wordEx">例文</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-buttons">
+        <button class="btn-prev" id="vocabPrev">← 前へ</button>
+        <button class="btn-unknown" id="vocabUnknown">❌ 覚えてない</button>
+        <button class="btn-known" id="vocabKnown">✅ 覚えた</button>
+        <button class="btn-next" id="vocabNext">次へ →</button>
+      </div>
+    </section>
+
+    <!-- 文法解説画面 -->
+    <section id="grammarScreen" class="screen">
+      <button class="back-btn" data-screen="home">← ホームに戻る</button>
+      <h2 class="screen-title">📐 文法解説</h2>
+      <div id="grammarList" class="grammar-list"></div>
+    </section>
+
+    <!-- 文法詳細画面 -->
+    <section id="grammarDetailScreen" class="screen">
+      <button class="back-btn" data-screen="grammar">← 文法一覧に戻る</button>
+      <h2 class="screen-title" id="grammarTitle"></h2>
+      <div class="grammar-content" id="grammarContent"></div>
+      <button class="btn-complete" id="grammarCompleteBtn">✅ 学習完了にする</button>
+    </section>
+
+    <!-- Part5画面 -->
+    <section id="part5Screen" class="screen">
+      <button class="back-btn" data-screen="home">← ホームに戻る</button>
+      <h2 class="screen-title">✏️ Part5 短文穴埋め</h2>
+      <div class="progress-bar"><div class="progress-fill" id="part5Bar"></div></div>
+      <div class="card-counter" id="part5Counter">1 / 30</div>
+      <div class="question-card" id="part5Question"></div>
+      <div class="choices" id="part5Choices"></div>
+      <div class="explanation" id="part5Explanation"></div>
+      <div class="card-buttons">
+        <button class="btn-prev" id="part5Prev">← 前へ</button>
+        <button class="btn-next" id="part5Next">次へ →</button>
+      </div>
+    </section>
+
+    <!-- Part6/7画面 -->
+    <section id="part67Screen" class="screen">
+      <button class="back-btn" data-screen="home">← ホームに戻る</button>
+      <h2 class="screen-title">📄 Part6/7 長文読解</h2>
+      <div class="card-counter" id="part67Counter">1 / 5</div>
+      <div class="passage" id="part67Passage"></div>
+      <div id="part67Questions"></div>
+      <div class="card-buttons">
+        <button class="btn-prev" id="part67Prev">← 前へ</button>
+        <button class="btn-next" id="part67Next">次へ →</button>
+      </div>
+    </section>
+
+    <!-- 模擬試験画面 -->
+    <section id="mockScreen" class="screen">
+      <button class="back-btn" data-screen="home">← ホームに戻る</button>
+      <h2 class="screen-title">🎯 模擬試験（20問）</h2>
+      <div id="mockIntro" class="mock-intro">
+        <p>20問のミニ模擬試験です。</p>
+        <p>制限時間：<strong>15分</strong></p>
+        <p>本番のつもりで取り組みましょう！</p>
+        <button id="mockStartBtn" class="btn-start">🚀 試験を開始する</button>
+      </div>
+      <div id="mockInProgress" class="hidden">
+        <div class="mock-header">
+          <div>問題 <span id="mockCurrent">1</span> / 20</div>
+          <div class="timer" id="mockTimer">15:00</div>
+        </div>
+        <div class="question-card" id="mockQuestion"></div>
+        <div class="choices" id="mockChoices"></div>
+        <div class="card-buttons">
+          <button class="btn-next" id="mockNextBtn">次の問題 →</button>
+        </div>
+      </div>
+      <div id="mockResult" class="hidden">
+        <h3>🎉 試験終了！</h3>
+        <div class="result-score">
+          <div>正解数</div>
+          <div class="result-number"><span id="mockCorrect">0</span> / 20</div>
+          <div>予測TOEICスコア</div>
+          <div class="result-toeic"><span id="mockToeicScore">0</span>点</div>
+        </div>
+        <button id="mockRetryBtn" class="btn-start">もう一度挑戦</button>
+      </div>
+    </section>
+
+    <!-- 復習画面 -->
+    <section id="reviewScreen" class="screen">
+      <button class="back-btn" data-screen="home">← ホームに戻る</button>
+      <h2 class="screen-title">🔁 間違えた問題の復習</h2>
+      <div id="reviewContent"></div>
+    </section>
+  </main>
+
+  <!-- スクリプト読み込み -->
+<script src="data-vocab.js"></script>
+<script src="data-grammar.js"></script>
+<script src="data-part5.js"></script>
+<script src="data-part67.js"></script>
+<script src="data-mock.js"></script>
+<script src="app.js"></script>
+
+  <script>
+    // Service Worker登録（PWA対応）
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW登録失敗:', err));
+      });
+    }
+  </script>
+</body>
+</html>
