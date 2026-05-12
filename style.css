@@ -641,3 +641,318 @@ button {
     font-size: 48px;
   }
 }
+
+/* ============ アプリフッター（index.html） ============ */
+.app-footer {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 20px 16px;
+  text-align: center;
+  margin-top: 24px;
+}
+
+/* ============ サブページ共通 ============ */
+.sub-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.sub-page-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text);
+  margin: 16px 0 4px;
+}
+
+.sub-page-updated {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-bottom: 20px;
+}
+
+.sub-page-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  line-height: 1.8;
+}
+
+.sub-page-card h3 {
+  font-size: 17px;
+  font-weight: bold;
+  color: var(--primary);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sub-page-card p {
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.sub-page-card p:last-child {
+  margin-bottom: 0;
+}
+
+.sub-page-card a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.sub-page-list {
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+.sub-page-list li {
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+/* ============ フッター（サブページ共通） ============ */
+.sub-page-footer {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 24px 16px;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.footer-nav a {
+  font-size: 13px;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.footer-nav a:hover {
+  text-decoration: underline;
+}
+
+.footer-copy {
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+/* ============ About ページ ============ */
+.about-hero {
+  text-align: center;
+  padding: 32px 20px;
+}
+
+.about-icon {
+  font-size: 56px;
+  margin-bottom: 12px;
+}
+
+.about-app-name {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--primary);
+  margin-bottom: 8px;
+  border: none;
+  padding: 0;
+}
+
+.about-tagline {
+  font-size: 15px;
+  color: var(--text-sub);
+  margin-bottom: 0;
+}
+
+.about-features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.about-feature-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.about-feature-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.about-feature-item strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.about-feature-item p {
+  font-size: 14px;
+  color: var(--text-sub);
+  margin: 0;
+}
+
+.about-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.about-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.about-table td:first-child {
+  color: var(--text-sub);
+  width: 40%;
+  font-weight: bold;
+}
+
+.about-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============ Contact ページ ============ */
+.contact-email-btn {
+  display: inline-block;
+  background: var(--primary);
+  color: white !important;
+  text-decoration: none !important;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.contact-email-btn:hover {
+  background: var(--primary-dark);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.required {
+  display: inline-block;
+  background: var(--danger);
+  color: white;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--text);
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+}
+
+.form-textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.contact-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+
+.contact-submit-btn:hover {
+  background: var(--primary-dark);
+}
+
+.contact-sent {
+  background: #d1fae5;
+  border: 1px solid var(--success);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  color: #065f46;
+}
+
+[data-theme="dark"] .contact-sent {
+  background: #064e3b;
+  color: #a7f3d0;
+}
+
+/* ============ FAQ ============ */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.faq-list dt {
+  font-weight: bold;
+  color: var(--text);
+  margin-top: 14px;
+  font-size: 15px;
+}
+
+.faq-list dd {
+  color: var(--text-sub);
+  margin-left: 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--border);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ============ レスポンシブ（サブページ） ============ */
+@media (min-width: 600px) {
+  .about-features {
+    gap: 20px;
+  }
+  .footer-nav {
+    gap: 8px 24px;
+  }
+}
