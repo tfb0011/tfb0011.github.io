@@ -3,7 +3,7 @@
 //  戦略: Network-first → キャッシュフォールバック
 // ============================================================
 
-const CACHE_NAME = 'toeic800-v1';
+const CACHE_NAME = 'toeic800-v2';
 
 const CACHE_FILES = [
   './',

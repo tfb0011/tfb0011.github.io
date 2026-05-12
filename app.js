@@ -369,12 +369,9 @@ function renderVocab() {
   document.getElementById('wordJa').textContent = w.ja;
   document.getElementById('wordEx').textContent = w.example;
   const exJaEl = document.getElementById('wordExJa');
-  if (w.exampleJa) {
-    exJaEl.textContent = w.exampleJa;
-    exJaEl.style.display = '';
-  } else {
-    exJaEl.style.display = 'none';
-  }
+  exJaEl.textContent = w.exampleJa || '（翻訳準備中）';
+  exJaEl.style.display = '';
+  exJaEl.style.opacity = w.exampleJa ? '1' : '0.4';
 
   // カウンター・プログレスバー
   if (state.vocabMode === 'all') {
