@@ -405,7 +405,16 @@ button {
   font-size: 15px;
   color: var(--text-sub);
   font-style: italic;
+  padding: 0 12px 6px;
+}
+
+.word-example-ja {
+  font-size: 13px;
+  color: var(--text-sub);
   padding: 0 12px;
+  border-top: 1px solid var(--border);
+  margin: 0 12px;
+  padding-top: 8px;
 }
 
 /* ============ ボタン群 ============ */

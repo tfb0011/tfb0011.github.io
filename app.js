@@ -305,6 +305,13 @@ function renderVocab() {
   document.getElementById('wordPos').textContent = w.pos;
   document.getElementById('wordJa').textContent = w.ja;
   document.getElementById('wordEx').textContent = w.example;
+  const exJaEl = document.getElementById('wordExJa');
+  if (w.exampleJa) {
+    exJaEl.textContent = w.exampleJa;
+    exJaEl.style.display = '';
+  } else {
+    exJaEl.style.display = 'none';
+  }
   document.getElementById('vocabCounter').textContent =
     `${state.vocabIndex + 1} / ${VOCAB_DATA.length}`;
   document.getElementById('vocabBar').style.width =
