@@ -193,31 +193,86 @@ function refreshHome() {
   // 復習問題数
   const reviewCnt = state.part5Wrong.length + state.part67Wrong.length;
   document.getElementById('reviewCount').textContent = `${reviewCnt}問`;
+  // スコア内訳
+  renderScoreBreakdown();
 }
 
 // ============ スコア予測ロジック ============
-function calcPredictedScore() {
-  // 各項目の進捗率を計算
-  const vocabRate = state.vocabKnown.length / VOCAB_DATA.length;
-  const grammarRate = state.grammarCompleted.length / GRAMMAR_DATA.length;
-  const part5Total = Object.keys(state.part5Answers).length;
-  const part5Correct = part5Total - state.part5Wrong.length;
-  const part5Rate = part5Total > 0 ? part5Correct / part5Total : 0;
-  const part67Total = Object.keys(state.part67Answers).length;
-  const part67Correct = part67Total - state.part67Wrong.length;
-  const part67Rate = part67Total > 0 ? part67Correct / part67Total : 0;
+// 予測スコア = 300（ベース）＋ Σ(各率 × 重み) × 690（最大加算点）
+// 語彙カバー率   ＝ 覚えた語数   / 全3057語  × 25%
+// 文法カバー率   ＝ 完了した項目 / 全32項目  × 10%
+// Part5 正答率  ＝ 正解した問題 / 全400問   × 30%
+// Part6/7 正答率 ＝ 正解した問題 / 全209問  × 35%
+// ベース300点 ＋ 最大690点 ＝ 最大990点
 
-  // 重み付け平均
+const SCORE_WEIGHTS = { vocab: 0.25, grammar: 0.10, part5: 0.30, part67: 0.35 };
+const SCORE_BASE    = 300;
+const SCORE_RANGE   = 690;
+
+function getScoreBreakdown() {
+  const vocabKnown    = state.vocabKnown.length;
+  const vocabTotal    = VOCAB_DATA.length;
+  const vocabRate     = vocabKnown / vocabTotal;
+
+  const grammarDone   = state.grammarCompleted.length;
+  const grammarTotal  = GRAMMAR_DATA.length;
+  const grammarRate   = grammarDone / grammarTotal;
+
+  const part5Answered = Object.keys(state.part5Answers).length;
+  const part5Correct  = part5Answered - state.part5Wrong.length;
+  const part5Total    = PART5_DATA.length;
+  const part5Rate     = part5Correct / part5Total;
+
+  const part67AllQ    = PART67_DATA.reduce((s, p) => s + p.questions.length, 0);
+  const part67Answered = Object.keys(state.part67Answers).length;
+  const part67Correct = part67Answered - state.part67Wrong.length;
+  const part67Rate    = part67Correct / part67AllQ;
+
   const overall =
-    vocabRate * 0.25 +
-    grammarRate * 0.15 +
-    part5Rate * 0.25 +
-    part67Rate * 0.35;
+    vocabRate   * SCORE_WEIGHTS.vocab   +
+    grammarRate * SCORE_WEIGHTS.grammar +
+    part5Rate   * SCORE_WEIGHTS.part5   +
+    part67Rate  * SCORE_WEIGHTS.part67;
 
-  // 300点〜850点にマッピング
-  const score = Math.round(300 + overall * 550);
+  return {
+    overall,
+    items: [
+      { label: '語彙カバー率',    done: vocabKnown,    total: vocabTotal,   unit: '語',  rate: vocabRate,   weight: SCORE_WEIGHTS.vocab,   pt: Math.round(vocabRate   * SCORE_WEIGHTS.vocab   * SCORE_RANGE) },
+      { label: '文法カバー率',    done: grammarDone,   total: grammarTotal, unit: '項目', rate: grammarRate, weight: SCORE_WEIGHTS.grammar, pt: Math.round(grammarRate * SCORE_WEIGHTS.grammar * SCORE_RANGE) },
+      { label: 'Part5 正答率',   done: part5Correct,  total: part5Total,   unit: '問',  rate: part5Rate,   weight: SCORE_WEIGHTS.part5,   pt: Math.round(part5Rate   * SCORE_WEIGHTS.part5   * SCORE_RANGE) },
+      { label: 'Part6/7 正答率', done: part67Correct, total: part67AllQ,   unit: '問',  rate: part67Rate,  weight: SCORE_WEIGHTS.part67,  pt: Math.round(part67Rate  * SCORE_WEIGHTS.part67  * SCORE_RANGE) },
+    ],
+  };
+}
+
+function calcPredictedScore() {
+  const { overall } = getScoreBreakdown();
   if (overall === 0) return '---';
-  return Math.min(score, 990);
+  return Math.min(Math.round(SCORE_BASE + overall * SCORE_RANGE), 990);
+}
+
+function renderScoreBreakdown() {
+  const el = document.getElementById('scoreBreakdown');
+  if (!el) return;
+  const { overall, items } = getScoreBreakdown();
+  const totalPt = items.reduce((s, i) => s + i.pt, 0);
+  const scoreText = overall === 0 ? '---' : Math.min(SCORE_BASE + totalPt, 990) + '点';
+
+  el.innerHTML = `
+    <p class="breakdown-title">📊 スコア算出の内訳</p>
+    <table class="breakdown-table">
+      <thead><tr><th>項目</th><th>実績</th><th>重み</th><th>貢献点</th></tr></thead>
+      <tbody>
+        ${items.map(i => `<tr>
+          <td>${i.label}</td>
+          <td>${i.done} / ${i.total}${i.unit}（${(i.rate * 100).toFixed(1)}%）</td>
+          <td>${Math.round(i.weight * 100)}%</td>
+          <td>+${i.pt}pt</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <p class="breakdown-formula">${SCORE_BASE}点（ベース） ＋ ${totalPt}点 ＝ <strong>${scoreText}</strong></p>
+  `;
 }
 
 // ============ テーマ切替 ============

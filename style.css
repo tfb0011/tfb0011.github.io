@@ -230,6 +230,68 @@ button {
   box-shadow: var(--shadow);
 }
 
+/* ============ スコア内訳 ============ */
+.score-breakdown {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.breakdown-title {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.breakdown-table th {
+  color: var(--text-sub);
+  font-weight: 500;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.breakdown-table td {
+  padding: 5px 6px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.breakdown-table td:nth-child(2) {
+  color: var(--text-sub);
+}
+
+.breakdown-table td:last-child {
+  color: var(--primary);
+  font-weight: 600;
+  text-align: right;
+}
+
+.breakdown-table th:last-child {
+  text-align: right;
+}
+
+.breakdown-formula {
+  text-align: right;
+  color: var(--text-sub);
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.breakdown-formula strong {
+  color: var(--primary);
+  font-size: 14px;
+}
+
 /* ============ 共通：戻るボタン・タイトル ============ */
 .back-btn {
   display: inline-block;
